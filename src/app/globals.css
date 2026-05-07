@@ -2,20 +2,55 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@layer base {
+  body {
+    background-color: theme('colors.background');
+    color: theme('colors.foreground');
+    font-feature-settings: "rlig" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overscroll-behavior-y: none; 
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    /* The subtle, persistent blueprint grid background */
+    background-image: theme('backgroundImage.blueprint-grid');
+    background-size: 40px 40px; /* 40px architectural grid rhythm */
+    background-position: center top;
+    background-attachment: fixed;
+  }
+
+  /* Universal zero border radius enforcement for the structural feel */
+  * {
+    border-radius: 0 !important;
+  }
+
+  ::selection {
+    background-color: theme('colors.border');
+    color: theme('colors.accent');
+  }
+
+  /* Custom sharp scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: theme('colors.background');
+    border-left: 1px solid theme('colors.border');
+  }
+  ::-webkit-scrollbar-thumb {
+    background: theme('colors.surface');
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: theme('colors.muted');
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  /* Architectural drafting lines for layout boundaries */
+  .drafting-border {
+    border: 1px solid theme('colors.border');
+  }
+  
+  .drafting-border-b {
+    border-bottom: 1px solid theme('colors.border');
+  }
 }

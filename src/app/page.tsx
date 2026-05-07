@@ -1,101 +1,161 @@
-import Image from "next/image";
+'use client';
+
+import { motion } from 'framer-motion';
+import { SystemAnnotation } from '@/components/ui/system-annotation';
+import { AetherSchematic } from '@/components/sections/aether-schematic';
+import { OperatorProfile } from '@/components/sections/operator-profile';
+import { OperationsPanel } from '@/components/sections/operations-panel';
+import { ResearchArchive } from '@/components/sections/research-archive';
+import { SystemSpecs } from '@/components/sections/system-specs';
+// We will replace BentoGrid with a Schematic flow later.
+
+const fadeVariant = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { duration: 0.6, ease: 'linear' } },
+};
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <main className="min-h-screen w-full relative pt-24 md:pt-32 pb-32">
+      {/* 
+        The main content column. 
+        It sits perfectly between the fixed drafting lines created in layout.tsx 
+      */}
+      {/* Hero / System Entry */}
+      <div id="sys-entry" className="relative min-h-screen flex flex-col justify-center max-w-6xl mx-auto px-6 sm:px-12 md:px-24">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-8 mt-24 lg:mt-0 w-full">
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          {/* Identity Console (Left Column) */}
+          <motion.section
+            className="drafting-border bg-surface/50 p-8 md:p-12 flex flex-col justify-center w-full"
+            initial="hidden"
+            animate="visible"
+            variants={{
+              visible: { transition: { staggerChildren: 0.15 } }
+            }}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            {/* Top Bar of the Title Block */}
+            <div className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-end mb-16 gap-6 drafting-border-b pb-6">
+              <motion.div variants={fadeVariant}>
+                <SystemAnnotation label="DOC_TYPE" value="SYSTEMS_ARCHITECTURE_PORTFOLIO" />
+              </motion.div>
+              <motion.div variants={fadeVariant} className="flex gap-8">
+                <SystemAnnotation label="REV" value="v2.0.26" />
+                <SystemAnnotation label="STATUS" value={<span className="text-accent">ONLINE</span>} />
+              </motion.div>
+            </div>
+
+            {/* Main Title Area */}
+            <motion.div variants={fadeVariant} className="mb-12">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-foreground uppercase leading-[1.1] mb-4">
+                Sumit Dixit
+              </h1>
+              <h2 className="text-xl md:text-2xl text-muted font-light tracking-wide">
+                Backend Developer & DevOps Engineer
+              </h2>
+            </motion.div>
+
+            {/* Technical Summary */}
+            <motion.div variants={fadeVariant} className="grid grid-cols-1 md:grid-cols-2 gap-8 drafting-border-t pt-8">
+              <div>
+                <SystemAnnotation
+                  label="PRIMARY_OBJECTIVE"
+                  value="Architecting robust, scalable systems built to last decades without downtime."
+                  className="max-w-sm"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <SystemAnnotation label="STACK.BACKEND" value="Node.js, Express, Postgres" />
+                <SystemAnnotation label="STACK.DEVOPS" value="Docker, Nginx, Actions" />
+              </div>
+            </motion.div>
+          </motion.section>
+
+          {/* Operator Registry Panel (Right Column) */}
+          <motion.aside
+            className="group drafting-border bg-surface/30 relative flex flex-col min-h-[400px] lg:min-h-full aspect-[3/4] lg:aspect-auto w-full"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
           >
-            Read our docs
-          </a>
+            {/* Precision Crosshairs */}
+            <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-accent/50 -translate-x-[1px] -translate-y-[1px] z-20" />
+            <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-accent/50 translate-x-[1px] -translate-y-[1px] z-20" />
+            <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-accent/50 -translate-x-[1px] translate-y-[1px] z-20" />
+            <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-accent/50 translate-x-[1px] translate-y-[1px] z-20" />
+
+            {/* Top Metadata */}
+            <div className="absolute top-4 left-4 right-4 flex justify-between items-center z-20">
+              <span className="font-mono text-[9px] text-accent/80 uppercase tracking-widest bg-background/90 px-2 py-1 backdrop-blur-md drafting-border">
+                [VISUAL_IDENT_CONFIRMED]
+              </span>
+              <span className="font-mono text-[9px] text-muted uppercase tracking-widest bg-background/80 px-2 py-1 drafting-border">
+                ID: SD-001
+              </span>
+            </div>
+
+            {/* Portrait Container */}
+            <div className="absolute inset-0 z-10 p-2">
+              <div className="w-full h-full bg-[#0A192F] relative overflow-hidden drafting-border mix-blend-luminosity grayscale opacity-75 group-hover:opacity-100 transition-opacity duration-700">
+                {/* Temporary Unsplash portrait for structural demonstration */}
+                <img
+                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&auto=format&fit=crop"
+                  alt="Sumit Dixit - Operator Profile"
+                  className="object-cover w-full h-full object-center opacity-80"
+                />
+
+                {/* Bottom Gradient Fade for Data Overlays */}
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background/90" />
+              </div>
+            </div>
+
+            {/* Bottom Metadata */}
+            <div className="absolute bottom-4 left-4 right-4 z-20">
+              <div className="font-mono text-[10px] text-muted flex flex-col gap-1.5 bg-background/90 backdrop-blur-md p-3 drafting-border">
+                <div className="flex justify-between border-b border-border/50 pb-1.5">
+                  <span>CLEARANCE</span>
+                  <span className="text-foreground/80">LEVEL_4</span>
+                </div>
+                <div className="flex justify-between pt-1">
+                  <span>STATUS</span>
+                  <span className="text-accent flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
+                    OPERATOR_ACTIVE
+                  </span>
+                </div>
+              </div>
+            </div>
+          </motion.aside>
+
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+      </div>
+
+      <div className="max-w-4xl mx-auto px-8 md:px-32 flex flex-col gap-24 pb-32 mt-12 md:mt-24">
+        {/* System Architecture Showcase */}
+        <div id="architecture" className="scroll-mt-32">
+          <AetherSchematic />
+        </div>
+
+        {/* Human Operator Subsystem */}
+        <div id="operator" className="scroll-mt-32">
+          <OperatorProfile />
+        </div>
+
+        {/* System Operations Modules */}
+        <div id="operations" className="scroll-mt-32">
+          <OperationsPanel />
+        </div>
+
+        {/* Technical Research Registry */}
+        <div id="research" className="scroll-mt-32">
+          <ResearchArchive />
+        </div>
+
+        {/* Dependencies and Handshake */}
+        <div className="pt-8 border-t border-border/50">
+          <SystemSpecs />
+        </div>
+      </div>
+    </main>
   );
 }
