@@ -19,28 +19,33 @@ export function AstronomicalLayer() {
     if (!ctx) return;
 
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
     let width = window.innerWidth;
     let height = window.innerHeight;
-    canvas.width = width;
-    canvas.height = height;
 
-    const handleResize = () => {
+    // Fix High-DPI Blurriness
+    const resize = () => {
+      const dpr = Math.max(1, window.devicePixelRatio || 1);
       width = window.innerWidth;
       height = window.innerHeight;
-      canvas.width = width;
-      canvas.height = height;
+      
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+      canvas.width = Math.floor(width * dpr);
+      canvas.height = Math.floor(height * dpr);
+      
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
-    window.addEventListener('resize', handleResize);
+
+    resize();
+    window.addEventListener('resize', resize, { passive: true });
 
     // 1. Sparse, infrastructural starfield
     const STAR_COUNT = 150; 
     const stars = Array.from({ length: STAR_COUNT }).map(() => ({
-      x: Math.random() * width,
+      x: Math.random() * width, // Initial random spread
       y: Math.random() * height,
-      size: Math.random() * 1.2 + 0.3, // Tiny, restrained points
-      opacity: Math.random() * 0.3 + 0.05, // Extremely faint
-      // Slow, ambient drift
+      size: Math.random() * 1.2 + 0.3,
+      opacity: Math.random() * 0.3 + 0.05,
       speedY: (Math.random() * 0.03 + 0.01) * (prefersReduced ? 0 : 1),
       speedX: (Math.random() * 0.01 + 0.005) * (prefersReduced ? 0 : 1)
     }));
@@ -56,27 +61,37 @@ export function AstronomicalLayer() {
     }
     let streaks: Streak[] = [];
     let lastStreakTime = performance.now();
-
     let animationFrameId: number;
 
     const render = (time: number) => {
+      // Pause completely if tab is hidden to save battery/CPU
+      if (document.hidden) {
+        lastStreakTime = time; // Prevent immediate burst on return
+        animationFrameId = requestAnimationFrame(render);
+        return;
+      }
+
       ctx.clearRect(0, 0, width, height);
 
       // Render ambient background depth
       ctx.fillStyle = '#ffffff';
-      stars.forEach(star => {
+      for (let i = 0; i < stars.length; i++) {
+        const star = stars[i];
         star.y -= star.speedY;
         star.x -= star.speedX;
 
-        // Seamless wrapping
-        if (star.y < 0) star.y = height;
-        if (star.x < 0) star.x = width;
+        // Dynamic wrap checking (fixes resize edge clustering)
+        if (star.y < 0) star.y = height + 10;
+        else if (star.y > height + 10) star.y = 0;
+        
+        if (star.x < 0) star.x = width + 10;
+        else if (star.x > width + 10) star.x = 0;
 
         ctx.globalAlpha = star.opacity;
         ctx.beginPath();
         ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
         ctx.fill();
-      });
+      }
 
       // Spawn Orbital Telemetry Streaks infrequently
       if (!prefersReduced && time - lastStreakTime > 8000 + Math.random() * 7000) {
@@ -84,9 +99,9 @@ export function AstronomicalLayer() {
           x: Math.random() * (width + 200) - 100, // Can spawn slightly off-screen
           y: -50,
           length: Math.random() * 120 + 80, // Long, precise lines
-          speed: Math.random() * 12 + 15, // Fast, like a laser or satellite ping
+          speed: Math.random() * 12 + 15, // Fast laser ping
           opacity: 0.5,
-          angle: Math.PI / 4 // Strict 45-degree angle matching architectural orthographics
+          angle: Math.PI / 4 // Strict 45-degree orthographic angle
         });
         lastStreakTime = time;
       }
@@ -99,7 +114,7 @@ export function AstronomicalLayer() {
         streak.y += Math.sin(streak.angle) * streak.speed;
 
         ctx.globalAlpha = streak.opacity;
-        ctx.lineWidth = 0.5; // Razor thin
+        ctx.lineWidth = 0.5; // Razor thin precision
         
         ctx.beginPath();
         ctx.moveTo(streak.x, streak.y);
@@ -112,17 +127,17 @@ export function AstronomicalLayer() {
         }
       }
 
-      ctx.globalAlpha = 1; // Reset opacity for next frame
+      ctx.globalAlpha = 1; // Reset
       animationFrameId = requestAnimationFrame(render);
     };
 
     animationFrameId = requestAnimationFrame(render);
 
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('resize', resize);
       cancelAnimationFrame(animationFrameId);
     };
-  }, [mounted]);
+  }, [mounted]); // Never tear down loop unless unmounting
 
   if (!mounted) return null;
 

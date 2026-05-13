@@ -29,40 +29,51 @@ function hexToRgba(color: string, alpha: number) {
 }
 
 export function CursorTrail(props: any) {
-  // Blueprint Defaults tuned for technical calmness
-  const {
-    color = "rgba(100, 255, 218, 0.4)", // Restored low-opacity accent
-    colorInverted = "#0A192F",
-    size = 4, // Restored ultra-minimal dot
-    hoverSize = 30, // Restored ring expansion size
-    borderWidth = 1,
-    spring = 0.15,
-    friction = 0.5,
-    trailDuration = 300,
-    transitionSpeed = 0.15
-  } = props;
-
   const [mounted, setMounted] = useState(false);
   
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const pointsRef = useRef<{x: number, y: number, age: number}[]>([]);
-  const ballRef = useRef({ x: 0, y: 0 });
-  const targetRef = useRef({ x: 0, y: 0 });
-  const velocityRef = useRef({ x: 0, y: 0 });
-  const animRef = useRef<number>();
-  const lastTimeRef = useRef(0);
-  const radiusRef = useRef(size / 2);
-  const fillOpacityRef = useRef(1);
-  const strokeOpacityRef = useRef(0);
-  const lineOpacityRef = useRef(0);
-  const lineWidthRef = useRef(0);
-  const lineTargetWidthRef = useRef(0);
-  const lineProgressRef = useRef(0);
-  const lineYRef = useRef(0);
+  // Props are safely stashed in a ref so they don't break the RAF lifecycle when React re-renders
+  const propsRef = useRef({
+    color: props.color || "rgba(100, 255, 218, 0.4)",
+    size: props.size || 4,
+    hoverSize: props.hoverSize || 30,
+    borderWidth: props.borderWidth || 1,
+    spring: props.spring || 0.15,
+    friction: props.friction || 0.5,
+    trailDuration: props.trailDuration || 300,
+    transitionSpeed: props.transitionSpeed || 0.15
+  });
+
+  // Sync props to ref
+  useEffect(() => {
+    propsRef.current = {
+      color: props.color || "rgba(100, 255, 218, 0.4)",
+      size: props.size || 4,
+      hoverSize: props.hoverSize || 30,
+      borderWidth: props.borderWidth || 1,
+      spring: props.spring || 0.15,
+      friction: props.friction || 0.5,
+      trailDuration: props.trailDuration || 300,
+      transitionSpeed: props.transitionSpeed || 0.15
+    };
+  }, [props]);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const pointsRef = useRef<{x: number, y: number, age: number}[]>([]);
+  const cursorState = useRef({
+    ball: { x: -100, y: -100 },
+    target: { x: -100, y: -100 },
+    velocity: { x: 0, y: 0 },
+    isHovering: false,
+    radius: propsRef.current.size / 2,
+    fillOpacity: 1,
+    strokeOpacity: 0
+  });
+  const lastTimeRef = useRef(0);
+  const animRef = useRef<number>();
 
   useEffect(() => {
     if (!mounted) return;
@@ -86,104 +97,113 @@ export function CursorTrail(props: any) {
       canvas.width = Math.floor(w * dpr);
       canvas.height = Math.floor(h * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      
-      const centerX = w / 2;
-      const centerY = h / 2;
-      
-      if (!ballRef.current.x && !ballRef.current.y) {
-        ballRef.current = { x: centerX, y: centerY };
-      }
-      if (!targetRef.current.x && !targetRef.current.y) {
-        targetRef.current = { x: centerX, y: centerY };
-      }
     };
 
     resize();
 
+    // Event-based interaction handling (Zero DOM reflows)
     const onMouseMove = (e: MouseEvent) => {
-      targetRef.current = { x: e.clientX, y: e.clientY };
+      cursorState.current.target = { x: e.clientX, y: e.clientY };
     };
 
-    window.addEventListener("mousemove", onMouseMove);
-    window.addEventListener("resize", resize);
+    const onMouseOver = (e: MouseEvent) => {
+      const el = e.target as Element;
+      // High-performance check for interactive elements without using document.elementFromPoint
+      cursorState.current.isHovering = !!el?.closest("a, button, [role='button'], .drafting-border, input, textarea");
+    };
+
+    // Pauses extreme physics jumps when returning to a backgrounded tab
+    const onVisibilityChange = () => {
+      if (!document.hidden) {
+        lastTimeRef.current = performance.now();
+      }
+    };
+
+    window.addEventListener("mousemove", onMouseMove, { passive: true });
+    window.addEventListener("mouseover", onMouseOver, { passive: true });
+    window.addEventListener("resize", resize, { passive: true });
+    document.addEventListener("visibilitychange", onVisibilityChange);
 
     const lerp = (from: number, to: number, amt: number) => from + (to - from) * amt;
 
-    const animate = () => {
-      const now = performance.now();
-      const dt = Math.min(now - lastTimeRef.current, 33);
-      lastTimeRef.current = now;
+    const animate = (time: number) => {
+      if (document.hidden) {
+        animRef.current = requestAnimationFrame(animate);
+        return;
+      }
+
+      const p = propsRef.current;
+      const state = cursorState.current;
+      
+      const dt = Math.min(time - lastTimeRef.current, 33);
+      lastTimeRef.current = time;
+      
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Physics interpolation (The exact Framer component math)
-      const dx = targetRef.current.x - ballRef.current.x;
-      const dy = targetRef.current.y - ballRef.current.y;
-      velocityRef.current.x += dx * spring;
-      velocityRef.current.y += dy * spring;
-      velocityRef.current.x *= friction;
-      velocityRef.current.y *= friction;
-      ballRef.current.x += velocityRef.current.x;
-      ballRef.current.y += velocityRef.current.y;
+      // Hide off-screen initially
+      if (state.target.x === -100 && state.target.y === -100) {
+        animRef.current = requestAnimationFrame(animate);
+        return;
+      }
+
+      // Physics interpolation
+      const dx = state.target.x - state.ball.x;
+      const dy = state.target.y - state.ball.y;
+      state.velocity.x += dx * p.spring;
+      state.velocity.y += dy * p.spring;
+      state.velocity.x *= p.friction;
+      state.velocity.y *= p.friction;
+      state.ball.x += state.velocity.x;
+      state.ball.y += state.velocity.y;
 
       // Trail age tracking
-      pointsRef.current.push({ x: ballRef.current.x, y: ballRef.current.y, age: 0 });
+      pointsRef.current.push({ x: state.ball.x, y: state.ball.y, age: 0 });
       for (let i = 0; i < pointsRef.current.length; i++) {
         pointsRef.current[i].age += dt;
       }
-      pointsRef.current = pointsRef.current.filter(p => p.age < trailDuration);
+      pointsRef.current = pointsRef.current.filter(point => point.age < p.trailDuration);
 
-      // Element under cursor for hover detection
-      const el = document.elementFromPoint(targetRef.current.x, targetRef.current.y);
-
-      // Trail Rendering (Gradient continuous line)
-      const currentColor = color;
+      // Trail Rendering
       if (pointsRef.current.length > 1) {
         ctx.beginPath();
         ctx.moveTo(pointsRef.current[0].x, pointsRef.current[0].y);
         for (let i = 1; i < pointsRef.current.length; i++) {
-          const p = pointsRef.current[i];
-          ctx.lineTo(p.x, p.y);
+          const pt = pointsRef.current[i];
+          ctx.lineTo(pt.x, pt.y);
         }
+        
         const oldest = pointsRef.current[0];
         const newest = pointsRef.current[pointsRef.current.length - 1];
-        const oldestOpacity = 1 - oldest.age / trailDuration;
+        const oldestOpacity = 1 - (oldest.age / p.trailDuration);
         
         const gradient = ctx.createLinearGradient(oldest.x, oldest.y, newest.x, newest.y);
-        gradient.addColorStop(0, hexToRgba(currentColor, Math.max(0, oldestOpacity * 0.3)));
-        gradient.addColorStop(1, hexToRgba(currentColor, 1));
+        gradient.addColorStop(0, hexToRgba(p.color, Math.max(0, oldestOpacity * 0.3)));
+        gradient.addColorStop(1, hexToRgba(p.color, 1));
         
         ctx.strokeStyle = gradient;
-        ctx.lineWidth = Math.max(1, size / 2); // Thin elegant stroke
+        ctx.lineWidth = Math.max(1, p.size / 2);
         ctx.lineCap = "round";
         ctx.lineJoin = "round";
         ctx.stroke();
       }
 
-      // Interaction State Definitions
-      const isRing = !!el?.closest("a, button, [role='button'], .drafting-border"); // Expand on interactive elements
-      const isLink = false; // Disabled explicit link underlining
-      const isWorkCard = false;
-
-      lineTargetWidthRef.current = 0;
-
       // Radius / Opacities interpolation
-      const targetRadius = isRing ? hoverSize / 2 : size / 2;
-      radiusRef.current = lerp(radiusRef.current, targetRadius, transitionSpeed);
-      
-      fillOpacityRef.current = lerp(fillOpacityRef.current, isRing ? 0 : 1, transitionSpeed);
-      strokeOpacityRef.current = lerp(strokeOpacityRef.current, isRing ? 1 : 0, transitionSpeed);
+      const targetRadius = state.isHovering ? p.hoverSize / 2 : p.size / 2;
+      state.radius = lerp(state.radius, targetRadius, p.transitionSpeed);
+      state.fillOpacity = lerp(state.fillOpacity, state.isHovering ? 0 : 1, p.transitionSpeed);
+      state.strokeOpacity = lerp(state.strokeOpacity, state.isHovering ? 1 : 0, p.transitionSpeed);
 
       // Draw Main Dot/Ring
       ctx.beginPath();
-      ctx.arc(ballRef.current.x, ballRef.current.y, radiusRef.current, 0, Math.PI * 2);
+      ctx.arc(state.ball.x, state.ball.y, state.radius, 0, Math.PI * 2);
       
-      if (strokeOpacityRef.current > 0.01) {
-        ctx.strokeStyle = hexToRgba(currentColor, strokeOpacityRef.current);
-        ctx.lineWidth = borderWidth;
+      if (state.strokeOpacity > 0.01) {
+        ctx.strokeStyle = hexToRgba(p.color, state.strokeOpacity);
+        ctx.lineWidth = p.borderWidth;
         ctx.stroke();
       }
-      if (fillOpacityRef.current > 0.01) {
-        ctx.fillStyle = hexToRgba(currentColor, fillOpacityRef.current);
+      if (state.fillOpacity > 0.01) {
+        ctx.fillStyle = hexToRgba(p.color, state.fillOpacity);
         ctx.fill();
       }
 
@@ -195,10 +215,12 @@ export function CursorTrail(props: any) {
 
     return () => {
       window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mouseover", onMouseOver);
       window.removeEventListener("resize", resize);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
       if (animRef.current) cancelAnimationFrame(animRef.current);
     };
-  }, [mounted, color, colorInverted, size, hoverSize, borderWidth, spring, friction, trailDuration, transitionSpeed]);
+  }, [mounted]); // Only run once on mount! Props changes handled via ref.
 
   if (!mounted) return null;
 
@@ -212,7 +234,7 @@ export function CursorTrail(props: any) {
         height: "100vh",
         display: "block",
         pointerEvents: "none",
-        zIndex: 9999,
+        zIndex: 9999, // Safely guaranteed above floating nav and content
       }}
     />,
     document.body
