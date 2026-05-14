@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { Command } from 'cmdk';
-import { Search, Github, Linkedin, Mail, Terminal, Command as CommandIcon } from 'lucide-react';
+import { Search, GitBranch, Link, Mail, Terminal, Command as CommandIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export function CommandMenu() {
@@ -89,13 +89,13 @@ export function CommandMenu() {
                       onSelect={() => { window.open('https://github.com'); setOpen(false); }}
                       className="flex items-center gap-3 px-3 py-3 text-sm rounded-none cursor-pointer text-muted aria-selected:bg-background aria-selected:text-foreground aria-selected:drafting-border border border-transparent transition-all"
                     >
-                      <Github className="w-4 h-4 text-accent" /> View GitHub profile
+                      <GitBranch className="w-4 h-4 text-accent" /> View GitHub profile
                     </Command.Item>
                     <Command.Item 
                       onSelect={() => { window.open('https://linkedin.com'); setOpen(false); }}
                       className="flex items-center gap-3 px-3 py-3 text-sm rounded-none cursor-pointer text-muted aria-selected:bg-background aria-selected:text-foreground aria-selected:drafting-border border border-transparent transition-all"
                     >
-                      <Linkedin className="w-4 h-4 text-accent" /> View LinkedIn profile
+                      <Link className="w-4 h-4 text-accent" /> View LinkedIn profile
                     </Command.Item>
                   </Command.Group>
                 </Command.List>

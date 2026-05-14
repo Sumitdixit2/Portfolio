@@ -59,7 +59,7 @@ export function AstronomicalLayer() {
       opacity: number;
       angle: number; 
     }
-    let streaks: Streak[] = [];
+    const streaks: Streak[] = [];
     let lastStreakTime = performance.now();
     let animationFrameId: number;
 

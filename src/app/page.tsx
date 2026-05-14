@@ -7,11 +7,13 @@ import { OperatorProfile } from '@/components/sections/operator-profile';
 import { OperationsPanel } from '@/components/sections/operations-panel';
 import { ResearchArchive } from '@/components/sections/research-archive';
 import { SystemSpecs } from '@/components/sections/system-specs';
+
+import { AetherObservatory } from '@/components/sections/aether-observatory';
 // We will replace BentoGrid with a Schematic flow later.
 
 const fadeVariant = {
   hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { duration: 0.6, ease: 'linear' } },
+  visible: { opacity: 1, transition: { duration: 0.6, ease: 'linear' as const } },
 };
 
 export default function Home() {
@@ -25,7 +27,7 @@ export default function Home() {
       <div id="sys-entry" className="relative min-h-screen flex flex-col justify-center max-w-6xl mx-auto px-6 sm:px-12 md:px-24">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-8 mt-24 lg:mt-0 w-full">
 
-          {/* Identity Console (Left Column) */}
+          {/* Left Column: Identity Console */}
           <motion.section
             className="drafting-border bg-surface/50 p-8 md:p-12 flex flex-col justify-center w-full"
             initial="hidden"
@@ -51,7 +53,7 @@ export default function Home() {
                 Sumit Dixit
               </h1>
               <h2 className="text-xl md:text-2xl text-muted font-light tracking-wide">
-                Backend Developer & DevOps Engineer
+                Backend Developer &amp; DevOps Engineer
               </h2>
             </motion.div>
 
@@ -129,6 +131,8 @@ export default function Home() {
 
         </div>
       </div>
+
+      <AetherObservatory />
 
       <div className="max-w-4xl mx-auto px-8 md:px-32 flex flex-col gap-24 pb-32 mt-12 md:mt-24">
         {/* System Architecture Showcase */}

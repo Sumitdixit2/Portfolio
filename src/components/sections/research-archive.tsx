@@ -124,7 +124,7 @@ function ArchiveRow({ log, isExpanded, onToggle }: { log: LogRecord, isExpanded:
             <div className="p-4 sm:p-6 md:pl-[calc(25%+1.5rem)] pt-0 md:pt-4 pb-6">
               <div className="drafting-border p-4 bg-background/50 border-l-2 border-l-accent/50">
                 <div className="font-mono text-[11px] text-accent/60 mb-2 uppercase">
-                  // Field_Note_Abstract
+                  {'//'} Field_Note_Abstract
                 </div>
                 <p className="font-mono text-xs text-muted leading-relaxed">
                   {log.abstract}

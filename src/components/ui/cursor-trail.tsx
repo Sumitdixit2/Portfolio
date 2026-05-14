@@ -28,7 +28,18 @@ function hexToRgba(color: string, alpha: number) {
   return `rgba(0,0,0,${alpha})`;
 }
 
-export function CursorTrail(props: any) {
+interface CursorTrailProps {
+  color?: string;
+  size?: number;
+  hoverSize?: number;
+  borderWidth?: number;
+  spring?: number;
+  friction?: number;
+  trailDuration?: number;
+  transitionSpeed?: number;
+}
+
+export function CursorTrail(props: CursorTrailProps) {
   const [mounted, setMounted] = useState(false);
   
   // Props are safely stashed in a ref so they don't break the RAF lifecycle when React re-renders

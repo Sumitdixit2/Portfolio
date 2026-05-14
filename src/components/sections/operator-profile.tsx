@@ -52,7 +52,7 @@ function RuntimeIdentityMatrix() {
 function CognitiveTopology() {
   const drawLine = {
     hidden: { pathLength: 0, opacity: 0 },
-    visible: { pathLength: 1, opacity: 1, transition: { duration: 1.5, ease: "easeInOut" } }
+    visible: { pathLength: 1, opacity: 1, transition: { duration: 1.5, ease: "easeInOut" as const } }
   };
 
   return (
@@ -113,7 +113,7 @@ function SystemDirectives() {
       <div className="flex flex-col gap-4">
         {directives.map((text, i) => (
           <div key={i} className="flex gap-4 items-start">
-            <span className="font-mono text-xs text-accent mt-1 shrink-0">// DIR_0{i + 1}</span>
+            <span className="font-mono text-xs text-accent mt-1 shrink-0">{'//'} DIR_0{i + 1}</span>
             <p className="font-sans text-sm text-muted leading-relaxed">{text}</p>
           </div>
         ))}

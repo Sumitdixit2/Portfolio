@@ -56,7 +56,7 @@ const drawLine = {
   visible: { 
     pathLength: 1, 
     opacity: 1, 
-    transition: { pathLength: { duration: 1.5, ease: 'linear' }, opacity: { duration: 0.1 } } 
+    transition: { pathLength: { duration: 1.5, ease: 'linear' as const }, opacity: { duration: 0.1 } } 
   }
 };
 
