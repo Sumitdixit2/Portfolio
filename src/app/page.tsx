@@ -132,9 +132,15 @@ export default function Home() {
         </div>
       </div>
 
+      {/* Observatory Entry Separator */}
+      <div className="w-full border-t border-border/30 mt-24" />
+
       <AetherObservatory />
 
-      <div className="max-w-4xl mx-auto px-8 md:px-32 flex flex-col gap-24 pb-32 mt-12 md:mt-24">
+      {/* Observatory Exit Separator */}
+      <div className="w-full border-t border-border/30" />
+
+      <div className="max-w-4xl mx-auto px-8 md:px-32 flex flex-col gap-24 pb-32 mt-20 md:mt-28">
         {/* System Architecture Showcase */}
         <div id="architecture" className="scroll-mt-32">
           <AetherSchematic />

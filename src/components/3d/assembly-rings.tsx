@@ -32,8 +32,8 @@ export function AssemblyRings({ scrollProgress }: { scrollProgress: MotionValue<
 
   useFrame((state) => {
     const rawP = scrollProgress.get();
-    // Rings explode mid (0.3 -> 0.6)
-    const p = Math.max(0, Math.min(1, (rawP - 0.3) * 3.333));
+    // Rings explode after shell — 0.22→0.37 of scroll (~210vh at 1400vh total)
+    const p = Math.max(0, Math.min(1, (rawP - 0.22) * 6.667));
     const t = state.clock.elapsedTime;
 
     // ── Upper ring: primary CW rotation + Y micro-oscillation after separation ──

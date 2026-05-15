@@ -33,8 +33,8 @@ export function InstrumentationShell({ scrollProgress }: { scrollProgress: Motio
 
   useFrame((state) => {
     const rawP = scrollProgress.get();
-    // Shell opens early (0.1 -> 0.4)
-    const p = Math.max(0, Math.min(1, (rawP - 0.1) * 3.333));
+    // Shell opens very gradually — 0.05→0.20 of scroll (~210vh at 1400vh total)
+    const p = Math.max(0, Math.min(1, (rawP - 0.05) * 6.667));
     const t = state.clock.elapsedTime;
 
     // ── Shell group: slow counter-rotation with subtle speed modulation ──

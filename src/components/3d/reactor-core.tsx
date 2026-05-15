@@ -34,8 +34,8 @@ export function ReactorCore({ scrollProgress }: { scrollProgress: MotionValue<nu
   useFrame((state) => {
     const rawP = scrollProgress.get();
     const t = state.clock.elapsedTime;
-    // Core separates late (0.5 -> 0.8)
-    const p = Math.max(0, Math.min(1, (rawP - 0.5) * 3.333));
+    // Core separates last, deepest — 0.42→0.57 of scroll (~210vh at 1400vh total)
+    const p = Math.max(0, Math.min(1, (rawP - 0.42) * 6.667));
 
     // ── Nucleus: rotation speed modulates on a slow calibration cycle ──
     if (coreGroup.current) {

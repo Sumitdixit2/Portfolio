@@ -26,28 +26,7 @@ function CognitiveNode({
   );
 }
 
-function RuntimeIdentityMatrix() {
-  const metrics = [
-    { label: 'DEPLOYMENT_REGION', value: 'UTC+5:30 (INDIA)' },
-    { label: 'CURRENT_FOCUS', value: 'SYSTEMS_ARCHITECTURE' },
-    { label: 'ACTIVE_RESEARCH', value: 'DISTRIBUTED_CONSENSUS' },
-    { label: 'BUILD_MODE', value: 'EXPERIMENTAL / DEEP_WORK' },
-  ];
 
-  return (
-    <div className="flex flex-col gap-4">
-      <SystemAnnotation label="SYS_STATE" value="RUNTIME_IDENTITY_METRICS" className="mb-2" />
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {metrics.map(m => (
-          <div key={m.label} className="drafting-border p-4 bg-surface/30">
-            <div className="font-mono text-[11px] text-muted mb-1">[{m.label}]</div>
-            <div className="font-mono text-xs text-foreground">{m.value}</div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 function CognitiveTopology() {
   const drawLine = {
@@ -56,7 +35,7 @@ function CognitiveTopology() {
   };
 
   return (
-    <div className="w-full overflow-x-auto scrollbar-thin mt-12 mb-12">
+    <div className="w-full overflow-x-auto scrollbar-thin mb-8">
       <div className="relative min-w-[700px] h-[300px] drafting-border bg-background/50">
         
         <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 700 300" preserveAspectRatio="xMidYMid meet">
@@ -122,6 +101,8 @@ function SystemDirectives() {
   );
 }
 
+import { GeospatialNode } from './geospatial-node';
+
 export function OperatorProfile() {
   return (
     <section className="relative">
@@ -135,11 +116,21 @@ export function OperatorProfile() {
         </p>
       </div>
 
-      <RuntimeIdentityMatrix />
-      
-      <CognitiveTopology />
+      {/* Two-column: Globe left, Directives right */}
+      <div className="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-8 items-start mb-12">
+        {/* Geospatial Observatory — constrained anchor, not dominant */}
+        <div className="w-full">
+          <GeospatialNode />
+        </div>
 
-      <SystemDirectives />
+        {/* System Directives — vertical companion */}
+        <div className="flex flex-col justify-center h-full">
+          <SystemDirectives />
+        </div>
+      </div>
+
+      {/* Full-width Cognitive Topology — needs room to breathe */}
+      <CognitiveTopology />
 
     </section>
   );

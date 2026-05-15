@@ -61,12 +61,12 @@ export function ObservatoryScene({ scrollProgress }: { scrollProgress: MotionVal
 
   useFrame((state) => {
     if (groupRef.current) {
-      const drift = state.clock.elapsedTime * 0.05;
+      const drift = state.clock.elapsedTime * 0.03; // slower base drift — massive machine feel
       const rawP = scrollProgress.get();
-      // Add a slow 90 degree pan (PI/2) across the whole scroll to show off the object
-      groupRef.current.rotation.y = drift + rawP * (Math.PI / 2);
-      groupRef.current.rotation.x = Math.sin(drift) * 0.08 + rawP * 0.15;
-      groupRef.current.rotation.z = Math.cos(drift) * 0.04 - rawP * 0.05;
+      // Very slow drift + minimal scroll pan (PI/4 = 45° across full 1400vh)
+      groupRef.current.rotation.y = drift + rawP * (Math.PI / 4);
+      groupRef.current.rotation.x = Math.sin(drift) * 0.06 + rawP * 0.08;
+      groupRef.current.rotation.z = Math.cos(drift) * 0.03 - rawP * 0.03;
     }
   });
 

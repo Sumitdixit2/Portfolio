@@ -12,22 +12,22 @@ export function AnnotationRails({ scrollProgress }: { scrollProgress: MotionValu
   useFrame(() => {
     const p = scrollProgress.get();
     
-    // Shell fades in at 0.2
+    // Shell annotations visible from 0.20 (shell fully open) to 0.95
     let sOpacity = 0;
-    if (p > 0.2 && p < 0.95) sOpacity = Math.min(1, (p - 0.2) * 5);
-    if (p > 0.9) sOpacity = Math.max(0, 1 - (p - 0.9) * 10);
+    if (p > 0.20 && p < 0.97) sOpacity = Math.min(1, (p - 0.20) * 8);
+    if (p > 0.93) sOpacity = Math.max(0, 1 - (p - 0.93) * 14);
     if (Math.abs(sOpacity - opacityShell) > 0.01) setOpacityShell(sOpacity);
 
-    // Rings fade in at 0.4
+    // Ring annotations visible from 0.37 (rings fully separated) to 0.95
     let rOpacity = 0;
-    if (p > 0.4 && p < 0.95) rOpacity = Math.min(1, (p - 0.4) * 5);
-    if (p > 0.9) rOpacity = Math.max(0, 1 - (p - 0.9) * 10);
+    if (p > 0.37 && p < 0.97) rOpacity = Math.min(1, (p - 0.37) * 8);
+    if (p > 0.93) rOpacity = Math.max(0, 1 - (p - 0.93) * 14);
     if (Math.abs(rOpacity - opacityRings) > 0.01) setOpacityRings(rOpacity);
 
-    // Core fades in at 0.6
+    // Core annotations visible from 0.57 (core fully exposed) to 0.95
     let cOpacity = 0;
-    if (p > 0.6 && p < 0.95) cOpacity = Math.min(1, (p - 0.6) * 5);
-    if (p > 0.9) cOpacity = Math.max(0, 1 - (p - 0.9) * 10);
+    if (p > 0.57 && p < 0.97) cOpacity = Math.min(1, (p - 0.57) * 8);
+    if (p > 0.93) cOpacity = Math.max(0, 1 - (p - 0.93) * 14);
     if (Math.abs(cOpacity - opacityCore) > 0.01) setOpacityCore(cOpacity);
   });
 
