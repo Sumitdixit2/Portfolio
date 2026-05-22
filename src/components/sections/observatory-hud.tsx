@@ -37,28 +37,28 @@ export function ObservatoryHud() {
         <div className="absolute inset-0 rounded-full border border-accent/40" />
       </div>
 
-      {/* Top-left identifiers */}
-      <div className="absolute top-8 left-10 font-mono text-[9px] text-accent/40 flex flex-col gap-[3px] tracking-widest uppercase">
+      {/* Top-left identifiers — adjusted to top-20 and hidden on mobile */}
+      <div className="absolute top-20 left-10 font-mono text-[9px] text-accent/40 hidden sm:flex flex-col gap-[3px] tracking-widest uppercase">
         <div>OBS // AETHER_CORE</div>
         <div>SECTOR: SD-001</div>
       </div>
 
-      {/* Top-right live timestamp */}
-      <div className="absolute top-8 right-10 font-mono text-[9px] text-accent/40 text-right tracking-widest uppercase">
+      {/* Top-right live timestamp — adjusted to top-20 and hidden on mobile */}
+      <div className="absolute top-20 right-10 font-mono text-[9px] text-accent/40 text-right tracking-widest uppercase hidden sm:block">
         <div ref={timeRef}>0000-00-00T00:00:00.000Z | T_SYNC</div>
         <div className="mt-[3px]">OPS: OBSERVATORY</div>
       </div>
 
-      {/* Bottom-left diagnostics */}
-      <div className="absolute bottom-8 left-10 font-mono text-[9px] text-accent/35 tracking-widest uppercase flex flex-col gap-[3px]">
+      {/* Bottom-left diagnostics — hidden on mobile */}
+      <div className="absolute bottom-8 left-10 font-mono text-[9px] text-accent/35 tracking-widest uppercase hidden sm:flex flex-col gap-[3px]">
         <div>FRAME_LOCK: <span className="text-accent/60">NOMINAL</span></div>
         <div className="w-24 h-[1px] bg-accent/20 mt-1">
           <div className="h-full bg-accent/50 w-[72%]" />
         </div>
       </div>
 
-      {/* Bottom-right assembly state */}
-      <div className="absolute bottom-8 right-10 font-mono text-[9px] text-accent/35 text-right tracking-widest uppercase">
+      {/* Bottom-right assembly state — hidden on mobile */}
+      <div className="absolute bottom-8 right-10 font-mono text-[9px] text-accent/35 text-right tracking-widest uppercase hidden sm:block">
         <div>ASSEMBLY: <span className="text-accent/60">DYNAMIC</span></div>
         <div className="mt-[3px]">ORTHOGRAPHIC: 50× ZOOM</div>
       </div>

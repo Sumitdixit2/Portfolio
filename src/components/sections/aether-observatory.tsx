@@ -1,13 +1,16 @@
 'use client';
 
-import { useRef, useState, useEffect } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { Canvas } from '@react-three/fiber';
-import { OrthographicCamera } from '@react-three/drei';
-import { ObservatoryScene } from '../3d/observatory-scene';
+import { useRef } from 'react';
+import { motion, useScroll, useTransform, useInView } from 'framer-motion';
+import dynamic from 'next/dynamic';
 import { ObservatoryOverlays } from './observatory-overlays';
 import { ObservatoryHud } from './observatory-hud';
 import { SystemAnnotation } from '@/components/ui/system-annotation';
+
+const ObservatoryCanvas = dynamic(
+  () => import('../3d/observatory-canvas').then((mod) => mod.ObservatoryCanvas),
+  { ssr: false }
+);
 
 export function AetherObservatory() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -16,8 +19,7 @@ export function AetherObservatory() {
     offset: ["start start", "end end"]
   });
 
-  const [isMounted, setIsMounted] = useState(false);
-  useEffect(() => setIsMounted(true), []);
+  const shouldLoadScene = useInView(containerRef, { once: true, margin: "1000px" });
 
   // Entry / exit fade — the viewport fades in gently from the hero, and fades out before the next section
   const viewportOpacity = useTransform(scrollYProgress, [0, 0.015, 0.97, 1.0], [0, 1, 1, 0]);
@@ -65,36 +67,15 @@ export function AetherObservatory() {
         <ObservatoryOverlays scrollProgress={scrollYProgress} />
 
         {/* 3D Canvas */}
-        {isMounted && (
-          <div className="absolute inset-0 z-10">
-            <Canvas dpr={[1, 1.5]} className="cursor-crosshair">
-              <color attach="background" args={['#020917']} />
-              {/* Restrained peripheral fog: dissolves only extreme geometry edges */}
-              <fog attach="fog" args={['#020917', 40, 90]} />
-
-              <OrthographicCamera
-                makeDefault
-                position={[20, 20, 20]}
-                zoom={50}
-                near={-100}
-                far={100}
-                onUpdate={c => c.lookAt(0, 0, 0)}
-              />
-
-              {/* 3-light engineering photography rig */}
-              {/* Key: crisp white from upper-right, reveals geometry edges */}
-              <directionalLight position={[8, 14, 8]} intensity={5.0} color="#e6f1ff" />
-              {/* Rim: teal from lower-back, carves silhouette from void */}
-              <directionalLight position={[-10, -6, -12]} intensity={3.5} color="#64FFDA" />
-              {/* Fill: warm-neutral from below, prevents crushed shadow reads */}
-              <directionalLight position={[0, -8, 10]} intensity={1.8} color="#ccd6f6" />
-              {/* Ambient: dark navy — barely hints at occluded geometry */}
-              <ambientLight intensity={0.2} color="#0A192F" />
-
-              <ObservatoryScene scrollProgress={scrollYProgress} />
-            </Canvas>
-          </div>
-        )}
+        <div className="absolute inset-0 z-10">
+          {shouldLoadScene ? (
+            <ObservatoryCanvas scrollProgress={scrollYProgress} />
+          ) : (
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <SystemAnnotation label="STATUS" value="INITIALIZING_SCENE_GEOMETRY" className="animate-pulse opacity-50" />
+            </div>
+          )}
+        </div>
 
         {/* Bottom resolution state — fades in at end of traversal */}
         <motion.div

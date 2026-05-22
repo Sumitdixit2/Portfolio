@@ -4,6 +4,7 @@ import { useRef, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { Line, Sphere } from '@react-three/drei';
+import { GeographyTopology } from './geography-topology';
 
 // Helper to convert Lat/Lng to Cartesian 3D coordinates on a sphere
 function latLongToVector3(lat: number, lng: number, radius: number): THREE.Vector3 {
@@ -55,13 +56,20 @@ export function GeoObservatoryGlobe() {
           <meshBasicMaterial color="#020617" />
         </Sphere>
 
+        {/* Abstracted World Borders */}
+        <GeographyTopology 
+          radius={GLOBE_RADIUS + 0.002} 
+          color="#4a7fa5" 
+          opacity={0.32} 
+        />
+
         {/* Sparse lat/long wireframe — restrained topology */}
         <Sphere args={[GLOBE_RADIUS + 0.005, 24, 12]}>
           <meshBasicMaterial 
             color="#1e3a5f" 
             wireframe 
             transparent 
-            opacity={0.55} 
+            opacity={0.3} 
           />
         </Sphere>
 

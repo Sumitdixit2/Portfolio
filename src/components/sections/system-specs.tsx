@@ -70,14 +70,16 @@ export function SystemSpecs() {
           <SystemAnnotation label="PROTOCOL" value="INITIATE_HANDSHAKE" className="mb-4" />
           <div className="flex flex-col gap-3">
             <a 
-              href="mailto:contact@example.com" 
+              href="mailto:sumitdixit.dev@gmail.com" 
               className="drafting-border p-3 flex justify-between items-center text-sm font-sans text-foreground hover:bg-white/5 transition-colors group"
             >
               <span>Transmission via Email</span>
               <ArrowUpRight className="w-4 h-4 text-muted group-hover:text-accent transition-colors" />
             </a>
             <a 
-              href="https://github.com" 
+              href="https://github.com/Sumitdixit2" 
+              target="_blank" 
+              rel="noopener noreferrer"
               className="drafting-border p-3 flex justify-between items-center text-sm font-sans text-foreground hover:bg-white/5 transition-colors group"
             >
               <span>Repository Access (GitHub)</span>

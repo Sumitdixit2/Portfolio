@@ -89,12 +89,25 @@ function ArchiveRow({ log, isExpanded, onToggle }: { log: LogRecord, isExpanded:
           </span>
         </div>
         
-        <div className="flex-1 md:pr-8">
-          <div className="font-mono text-[11px] text-muted mb-1 uppercase tracking-widest">
-            {log.systemTag}
+        <div className="flex-1 md:pr-8 w-full">
+          <div className="flex items-center justify-between md:block mb-1">
+            <span className="font-mono text-[11px] text-muted uppercase tracking-widest">
+              {log.systemTag}
+            </span>
+            {/* Inline status tag for mobile */}
+            <span className="inline-block md:hidden font-mono text-[9px] px-1.5 py-0.5 drafting-border bg-surface/30">
+              <StatusIndicator status={log.status} />
+            </span>
           </div>
-          <h3 className="font-sans text-sm text-foreground/90 group-hover:text-foreground transition-colors">
-            {log.title}
+          <h3 className="font-sans text-sm text-foreground/90 group-hover:text-foreground transition-colors flex items-center justify-between gap-4">
+            <span>{log.title}</span>
+            {/* Inline interactive chevron indicator for mobile */}
+            <ChevronDown 
+              className={cn(
+                "inline-block md:hidden w-4 h-4 text-muted shrink-0 transition-transform duration-300", 
+                isExpanded && "rotate-180 text-accent"
+              )} 
+            />
           </h3>
         </div>
 

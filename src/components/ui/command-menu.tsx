@@ -80,13 +80,13 @@ export function CommandMenu() {
 
                   <Command.Group heading="HANDSHAKE_PROTOCOLS" className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-2 [&_[cmdk-group-heading]]:text-[10px] [&_[cmdk-group-heading]]:font-mono [&_[cmdk-group-heading]]:tracking-widest [&_[cmdk-group-heading]]:text-muted mt-2">
                     <Command.Item 
-                      onSelect={() => { window.open('mailto:your-email@example.com'); setOpen(false); }}
+                      onSelect={() => { window.open('mailto:sumitdixit.dev@gmail.com'); setOpen(false); }}
                       className="flex items-center gap-3 px-3 py-3 text-sm rounded-none cursor-pointer text-muted aria-selected:bg-background aria-selected:text-foreground aria-selected:drafting-border border border-transparent transition-all"
                     >
                       <Mail className="w-4 h-4 text-accent" /> Initiate Email
                     </Command.Item>
                     <Command.Item 
-                      onSelect={() => { window.open('https://github.com'); setOpen(false); }}
+                      onSelect={() => { window.open('https://github.com/Sumitdixit2'); setOpen(false); }}
                       className="flex items-center gap-3 px-3 py-3 text-sm rounded-none cursor-pointer text-muted aria-selected:bg-background aria-selected:text-foreground aria-selected:drafting-border border border-transparent transition-all"
                     >
                       <GitBranch className="w-4 h-4 text-accent" /> View GitHub profile

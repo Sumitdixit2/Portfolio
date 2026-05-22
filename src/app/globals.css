@@ -3,6 +3,10 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     background-color: theme('colors.background');
     color: theme('colors.foreground');
@@ -18,9 +22,9 @@
     background-attachment: fixed;
   }
 
-  /* Universal zero border radius enforcement for the structural feel */
-  * {
-    border-radius: 0 !important;
+  /* Sharp technical layout defaults; utility classes (like rounded-full) override this naturally */
+  body, main, section, header, footer, div, button, input, table, tr, td, th {
+    border-radius: 0;
   }
 
   ::selection {
@@ -52,5 +56,14 @@
   
   .drafting-border-b {
     border-bottom: 1px solid theme('colors.border');
+  }
+
+  /* High-fidelity architectural glass panel */
+  .glass-panel {
+    background: rgba(10, 25, 47, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(100, 255, 218, 0.08);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.35);
   }
 }

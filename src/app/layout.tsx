@@ -1,9 +1,10 @@
 import type { Metadata } from 'next';
 import { Space_Grotesk, Fira_Code } from 'next/font/google';
 import './globals.css';
-import { CursorTrail } from '@/components/ui/cursor-trail';
-import { AstronomicalLayer } from '@/components/ui/astronomical-layer';
+import { MotionLayers } from '@/components/ui/motion-layers';
 import { FloatingNav } from '@/components/ui/floating-nav';
+import { CommandMenu } from '@/components/ui/command-menu';
+
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
@@ -37,9 +38,9 @@ export default function RootLayout({
         <div className="fixed inset-y-0 right-8 md:right-24 w-px bg-border pointer-events-none z-0 hidden sm:block" />
         
         <div className="relative z-10">
-          <AstronomicalLayer />
-          <CursorTrail />
+          <MotionLayers />
           <FloatingNav />
+          <CommandMenu />
           {children}
         </div>
       </body>

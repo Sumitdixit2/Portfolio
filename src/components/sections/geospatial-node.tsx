@@ -1,12 +1,21 @@
 'use client';
 
+import { useRef } from 'react';
+import { useInView } from 'framer-motion';
+import dynamic from 'next/dynamic';
 import { SystemAnnotation } from '@/components/ui/system-annotation';
-import { GeospatialScene } from '@/components/3d/geospatial-scene';
-import { motion } from 'framer-motion';
+
+const GeospatialScene = dynamic(
+  () => import('@/components/3d/geospatial-scene').then((mod) => mod.GeospatialScene),
+  { ssr: false }
+);
 
 export function GeospatialNode() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const shouldLoadScene = useInView(containerRef, { once: true, margin: "1000px" });
+
   return (
-    <div className="flex flex-col gap-4 h-full w-full">
+    <div ref={containerRef} className="flex flex-col gap-4 h-full w-full">
       <SystemAnnotation label="SYS_NODE" value="GEO_OBSERVATORY" className="mb-2" />
       
       {/* Globe Container — restrained, instrument-scale */}
@@ -50,7 +59,13 @@ export function GeospatialNode() {
         </div>
 
         {/* 3D Scene */}
-        <GeospatialScene />
+        {shouldLoadScene ? (
+          <GeospatialScene />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <SystemAnnotation label="STATUS" value="INITIALIZING_GEO_TOPOLOGY" className="animate-pulse opacity-50" />
+          </div>
+        )}
 
         {/* Ambient Overlay to integrate with section lighting */}
         <div className="absolute inset-0 bg-gradient-to-t from-background/40 via-transparent to-transparent pointer-events-none z-10" />

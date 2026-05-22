@@ -5,11 +5,11 @@ import { motion, useScroll, useMotionValueEvent } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
 const navItems = [
-  { name: 'SYS_ENTRY', href: '#sys-entry' },
-  { name: 'ARCHITECTURE', href: '#architecture' },
-  { name: 'OPERATOR', href: '#operator' },
-  { name: 'OPERATIONS', href: '#operations' },
-  { name: 'RESEARCH', href: '#research' },
+  { name: 'SYS_ENTRY', shortName: 'ENTRY', href: '#sys-entry' },
+  { name: 'ARCHITECTURE', shortName: 'ARCH', href: '#architecture' },
+  { name: 'OPERATOR', shortName: 'USER', href: '#operator' },
+  { name: 'OPERATIONS', shortName: 'OPS', href: '#operations' },
+  { name: 'RESEARCH', shortName: 'LOGS', href: '#research' },
 ];
 
 export function FloatingNav() {
@@ -62,7 +62,16 @@ export function FloatingNav() {
     e.preventDefault();
     const el = document.querySelector(href);
     if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
+      const offset = 120; // 8rem clear header buffer clearance
+      const bodyRect = document.body.getBoundingClientRect().top;
+      const elementRect = el.getBoundingClientRect().top;
+      const elementPosition = elementRect - bodyRect;
+      const offsetPosition = elementPosition - offset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
     }
   };
 
@@ -79,11 +88,10 @@ export function FloatingNav() {
         {/* 
           Aerodynamic Floating Dock
           Using rounded-full for a true continuous curved capsule silhouette, 
-          with elongated horizontal padding (px-3 sm:px-4) to taper the edges organically 
-          and avoid a "boxy" feel.
+          with tapering padding and micro gaps to fit mobile screen borders cleanly.
         */}
         <div className={cn(
-          "flex items-center gap-1 sm:gap-2 px-3 py-1.5 sm:px-4 sm:py-2",
+          "flex items-center gap-1 sm:gap-2 px-2 py-1 sm:px-4 sm:py-2",
           "rounded-full backdrop-blur-xl border transition-all duration-700 ease-out",
           isScrolled 
             ? "bg-[#0A192F]/65 shadow-[0_24px_48px_-12px_rgba(0,0,0,0.8)] border-white/10" 
@@ -97,7 +105,7 @@ export function FloatingNav() {
                 href={item.href}
                 onClick={(e) => handleClick(e, item.href)}
                 className={cn(
-                  "relative px-4 py-2 sm:px-5 sm:py-2.5 rounded-full transition-colors duration-300",
+                  "relative px-2 py-1.5 sm:px-5 sm:py-2.5 rounded-full transition-colors duration-300",
                   "font-mono text-[9px] sm:text-[10px] tracking-widest uppercase cursor-none",
                   isActive ? "text-accent" : "text-muted hover:text-foreground/90"
                 )}
@@ -109,7 +117,10 @@ export function FloatingNav() {
                     transition={{ type: "spring", bounce: 0.15, duration: 0.6 }}
                   />
                 )}
-                <span className="relative z-10">{item.name}</span>
+                <span className="relative z-10">
+                  <span className="hidden sm:inline">{item.name}</span>
+                  <span className="inline sm:hidden">{item.shortName}</span>
+                </span>
               </a>
             );
           })}
