@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { usePerformanceStore } from '@/lib/performance-store';
 
 function hexToRgba(color: string, alpha: number) {
   if (!color) return `rgba(0,0,0,${alpha})`;
@@ -145,6 +146,7 @@ export function CursorTrail(props: CursorTrailProps) {
 
       const p = propsRef.current;
       const state = cursorState.current;
+      const tier = usePerformanceStore.getState().fpsTier;
       
       const dt = Math.min(time - lastTimeRef.current, 33);
       lastTimeRef.current = time;
@@ -157,52 +159,60 @@ export function CursorTrail(props: CursorTrailProps) {
         return;
       }
 
-      // Physics interpolation
-      const dx = state.target.x - state.ball.x;
-      const dy = state.target.y - state.ball.y;
-      state.velocity.x += dx * p.spring;
-      state.velocity.y += dy * p.spring;
-      state.velocity.x *= p.friction;
-      state.velocity.y *= p.friction;
-      state.ball.x += state.velocity.x;
-      state.ball.y += state.velocity.y;
-
-      // Trail age tracking
-      pointsRef.current.push({ x: state.ball.x, y: state.ball.y, age: 0 });
-      for (let i = 0; i < pointsRef.current.length; i++) {
-        pointsRef.current[i].age += dt;
+      // Physics interpolation (skipped on low tier)
+      if (tier !== 'low') {
+        const dx = state.target.x - state.ball.x;
+        const dy = state.target.y - state.ball.y;
+        state.velocity.x += dx * p.spring;
+        state.velocity.y += dy * p.spring;
+        state.velocity.x *= p.friction;
+        state.velocity.y *= p.friction;
+        state.ball.x += state.velocity.x;
+        state.ball.y += state.velocity.y;
+      } else {
+        // Direct assignment on low tier (snappy cursor, no physics interpolation)
+        state.ball.x = state.target.x;
+        state.ball.y = state.target.y;
       }
-      pointsRef.current = pointsRef.current.filter(point => point.age < p.trailDuration);
 
-      // Trail Rendering
-      if (pointsRef.current.length > 1) {
-        ctx.beginPath();
-        ctx.moveTo(pointsRef.current[0].x, pointsRef.current[0].y);
-        for (let i = 1; i < pointsRef.current.length; i++) {
-          const pt = pointsRef.current[i];
-          ctx.lineTo(pt.x, pt.y);
+      // Trail age tracking (skipped on low tier)
+      if (tier !== 'low') {
+        pointsRef.current.push({ x: state.ball.x, y: state.ball.y, age: 0 });
+        for (let i = 0; i < pointsRef.current.length; i++) {
+          pointsRef.current[i].age += dt;
         }
-        
-        const oldest = pointsRef.current[0];
-        const newest = pointsRef.current[pointsRef.current.length - 1];
-        const oldestOpacity = 1 - (oldest.age / p.trailDuration);
-        
-        const gradient = ctx.createLinearGradient(oldest.x, oldest.y, newest.x, newest.y);
-        gradient.addColorStop(0, hexToRgba(p.color, Math.max(0, oldestOpacity * 0.3)));
-        gradient.addColorStop(1, hexToRgba(p.color, 1));
-        
-        ctx.strokeStyle = gradient;
-        ctx.lineWidth = Math.max(1, p.size / 2);
-        ctx.lineCap = "round";
-        ctx.lineJoin = "round";
-        ctx.stroke();
+        pointsRef.current = pointsRef.current.filter(point => point.age < p.trailDuration);
+
+        // Trail Rendering
+        if (pointsRef.current.length > 1) {
+          ctx.beginPath();
+          ctx.moveTo(pointsRef.current[0].x, pointsRef.current[0].y);
+          for (let i = 1; i < pointsRef.current.length; i++) {
+            const pt = pointsRef.current[i];
+            ctx.lineTo(pt.x, pt.y);
+          }
+          
+          const oldest = pointsRef.current[0];
+          const newest = pointsRef.current[pointsRef.current.length - 1];
+          const oldestOpacity = 1 - (oldest.age / p.trailDuration);
+          
+          const gradient = ctx.createLinearGradient(oldest.x, oldest.y, newest.x, newest.y);
+          gradient.addColorStop(0, hexToRgba(p.color, Math.max(0, oldestOpacity * 0.3)));
+          gradient.addColorStop(1, hexToRgba(p.color, 1));
+          
+          ctx.strokeStyle = gradient;
+          ctx.lineWidth = Math.max(1, p.size / 2);
+          ctx.lineCap = "round";
+          ctx.lineJoin = "round";
+          ctx.stroke();
+        }
       }
 
       // Radius / Opacities interpolation
       const targetRadius = state.isHovering ? p.hoverSize / 2 : p.size / 2;
-      state.radius = lerp(state.radius, targetRadius, p.transitionSpeed);
-      state.fillOpacity = lerp(state.fillOpacity, state.isHovering ? 0 : 1, p.transitionSpeed);
-      state.strokeOpacity = lerp(state.strokeOpacity, state.isHovering ? 1 : 0, p.transitionSpeed);
+      state.radius = lerp(state.radius, targetRadius, tier === 'low' ? 1 : p.transitionSpeed);
+      state.fillOpacity = lerp(state.fillOpacity, state.isHovering ? 0 : 1, tier === 'low' ? 1 : p.transitionSpeed);
+      state.strokeOpacity = lerp(state.strokeOpacity, state.isHovering ? 1 : 0, tier === 'low' ? 1 : p.transitionSpeed);
 
       // Draw Main Dot/Ring
       ctx.beginPath();

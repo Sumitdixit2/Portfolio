@@ -6,6 +6,8 @@ import * as THREE from 'three';
 import { Line, Sphere } from '@react-three/drei';
 import { GeographyTopology } from './geography-topology';
 
+import { usePerformanceStore } from '@/lib/performance-store';
+
 // Helper to convert Lat/Lng to Cartesian 3D coordinates on a sphere
 function latLongToVector3(lat: number, lng: number, radius: number): THREE.Vector3 {
   const phi = (90 - lat) * (Math.PI / 180);
@@ -32,6 +34,7 @@ export function GeoObservatoryGlobe() {
   const railEndPos = useMemo(() => latLongToVector3(DELHI_LAT, DELHI_LNG, GLOBE_RADIUS + 0.5), []);
 
   useFrame((state) => {
+    const tier = usePerformanceStore.getState().fpsTier;
     const time = state.clock.elapsedTime;
     
     // Extremely slow autonomous rotation
@@ -41,9 +44,13 @@ export function GeoObservatoryGlobe() {
 
     // Pulse the marker ring
     if (markerGroup.current) {
-      const pulseScale = 1 + Math.sin(time * 2) * 0.15;
-      markerGroup.current.scale.setScalar(pulseScale);
-      markerGroup.current.rotation.z = time * 0.5;
+      if (tier === 'low') {
+        markerGroup.current.rotation.z = time * 0.5;
+      } else {
+        const pulseScale = 1 + Math.sin(time * 2) * 0.15;
+        markerGroup.current.scale.setScalar(pulseScale);
+        markerGroup.current.rotation.z = time * 0.5;
+      }
     }
   });
 

@@ -5,6 +5,8 @@ import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { MotionValue } from 'framer-motion';
 
+import { usePerformanceStore } from '@/lib/performance-store';
+
 // --- BLUEPRINT MATERIAL PALETTE — Reactor Core ---
 const MAT_CORE = new THREE.MeshStandardMaterial({
   color: '#020617',      // near-void black — primary structural mass
@@ -32,10 +34,25 @@ export function ReactorCore({ scrollProgress }: { scrollProgress: MotionValue<nu
   const lowerPlates = useRef<THREE.Group>(null);
 
   useFrame((state) => {
+    const tier = usePerformanceStore.getState().fpsTier;
     const rawP = scrollProgress.get();
     const t = state.clock.elapsedTime;
     // Core separates last, deepest — 0.42→0.57 of scroll (~210vh at 1400vh total)
     const p = Math.max(0, Math.min(1, (rawP - 0.42) * 6.667));
+
+    if (tier === 'low') {
+      // Degraded Math Bypass: Only base rotations and static spread
+      if (coreGroup.current) coreGroup.current.rotation.y += 0.08 * (1 / 60);
+      if (upperPlates.current) {
+        upperPlates.current.position.y = p * 1.5;
+        upperPlates.current.rotation.y = p * Math.PI * 0.25;
+      }
+      if (lowerPlates.current) {
+        lowerPlates.current.position.y = -(p * 1.5);
+        lowerPlates.current.rotation.y = -(p * Math.PI * 0.25);
+      }
+      return;
+    }
 
     // ── Nucleus: rotation speed modulates on a slow calibration cycle ──
     if (coreGroup.current) {

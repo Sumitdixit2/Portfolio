@@ -4,14 +4,20 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import { GeoObservatoryGlobe } from './geo-observatory-globe';
 import { Suspense } from 'react';
+import { PerformanceOrchestrator } from './performance-orchestrator';
+import { usePerformanceStore } from '@/lib/performance-store';
 
 export function GeospatialScene() {
+  const dpr = usePerformanceStore((state) => state.dpr);
+
   return (
     <div className="w-full h-full absolute inset-0 cursor-grab active:cursor-grabbing">
       <Canvas
+        dpr={dpr}
         camera={{ position: [0, 1.2, 6.5], fov: 40 }}
         gl={{ antialias: true, alpha: true }}
       >
+        <PerformanceOrchestrator />
         <Suspense fallback={null}>
           <ambientLight intensity={0.15} />
           {/* Primary edge-sculpting light */}

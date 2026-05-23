@@ -5,6 +5,8 @@ import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { MotionValue } from 'framer-motion';
 
+import { usePerformanceStore } from '@/lib/performance-store';
+
 // --- BLUEPRINT MATERIAL PALETTE — Instrumentation Shell ---
 const MAT_SHELL = new THREE.MeshStandardMaterial({
   color: '#020617',      // near-void — large shell body (must NOT be bright)
@@ -32,10 +34,26 @@ export function InstrumentationShell({ scrollProgress }: { scrollProgress: Motio
   const shellParts = useRef<(THREE.Group | null)[]>([]);
 
   useFrame((state) => {
+    const tier = usePerformanceStore.getState().fpsTier;
     const rawP = scrollProgress.get();
     // Shell opens very gradually — 0.05→0.20 of scroll (~210vh at 1400vh total)
     const p = Math.max(0, Math.min(1, (rawP - 0.05) * 6.667));
     const t = state.clock.elapsedTime;
+
+    if (tier === 'low') {
+      if (shellGroup.current) shellGroup.current.rotation.y = -(t * 0.018);
+      shellParts.current.forEach((part, i) => {
+        if (part) {
+          const angle = i * (Math.PI / 2);
+          const radiusExplode = p * 4.5;
+          const yBase = (i % 2 === 0 ? 1 : -1) * p * 1.5;
+          part.position.set(Math.sin(angle) * radiusExplode, yBase, Math.cos(angle) * radiusExplode);
+          part.rotation.x = Math.cos(angle) * p * 0.3;
+          part.rotation.z = -Math.sin(angle) * p * 0.3;
+        }
+      });
+      return;
+    }
 
     // ── Shell group: slow counter-rotation with subtle speed modulation ──
     if (shellGroup.current) {

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { usePerformanceStore } from '@/lib/performance-store';
 
 export function AstronomicalLayer() {
   const [mounted, setMounted] = useState(false);
@@ -41,14 +42,20 @@ export function AstronomicalLayer() {
 
     // 1. Sparse, infrastructural starfield
     const STAR_COUNT = 150; 
-    const stars = Array.from({ length: STAR_COUNT }).map(() => ({
-      x: Math.random() * width, // Initial random spread
-      y: Math.random() * height,
-      size: Math.random() * 1.2 + 0.3,
-      opacity: Math.random() * 0.3 + 0.05,
-      speedY: (Math.random() * 0.03 + 0.01) * (prefersReduced ? 0 : 1),
-      speedX: (Math.random() * 0.01 + 0.005) * (prefersReduced ? 0 : 1)
-    }));
+    const stars = Array.from({ length: STAR_COUNT }).map(() => {
+      const isShiny = Math.random() > 0.8; // 20% chance of being shiny
+      return {
+        x: Math.random() * width,
+        y: Math.random() * height,
+        size: isShiny ? Math.random() * 1.5 + 0.8 : Math.random() * 1.2 + 0.3,
+        baseOpacity: isShiny ? Math.random() * 0.5 + 0.3 : Math.random() * 0.3 + 0.05,
+        isShiny,
+        twinklePhase: Math.random() * Math.PI * 2,
+        twinkleSpeed: Math.random() * 0.002 + 0.001,
+        speedY: (Math.random() * 0.03 + 0.01) * (prefersReduced ? 0 : 1),
+        speedX: (Math.random() * 0.01 + 0.005) * (prefersReduced ? 0 : 1)
+      };
+    });
 
     // 2. Orbital Scan Events (Telemetry Streaks)
     interface Streak {
@@ -64,37 +71,47 @@ export function AstronomicalLayer() {
     let animationFrameId: number;
 
     const render = (time: number) => {
-      // Pause completely if tab is hidden to save battery/CPU
       if (document.hidden) {
-        lastStreakTime = time; // Prevent immediate burst on return
+        lastStreakTime = time;
         animationFrameId = requestAnimationFrame(render);
         return;
       }
 
+      const tier = usePerformanceStore.getState().fpsTier;
       ctx.clearRect(0, 0, width, height);
 
       // Render ambient background depth
       ctx.fillStyle = '#ffffff';
       for (let i = 0; i < stars.length; i++) {
         const star = stars[i];
-        star.y -= star.speedY;
-        star.x -= star.speedX;
+        
+        // Throttle movement if tier is low
+        if (tier !== 'low') {
+          star.y -= star.speedY;
+          star.x -= star.speedX;
+        }
 
-        // Dynamic wrap checking (fixes resize edge clustering)
+        // Dynamic wrap checking
         if (star.y < 0) star.y = height + 10;
         else if (star.y > height + 10) star.y = 0;
         
         if (star.x < 0) star.x = width + 10;
         else if (star.x > width + 10) star.x = 0;
 
-        ctx.globalAlpha = star.opacity;
+        let currentOpacity = star.baseOpacity;
+        if (star.isShiny) {
+          const twinkle = Math.sin(time * star.twinkleSpeed + star.twinklePhase);
+          currentOpacity += twinkle * 0.4;
+        }
+
+        ctx.globalAlpha = Math.max(0.05, Math.min(1, currentOpacity));
         ctx.beginPath();
         ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
         ctx.fill();
       }
 
       // Spawn Orbital Telemetry Streaks infrequently
-      if (!prefersReduced && time - lastStreakTime > 8000 + Math.random() * 7000) {
+      if (!prefersReduced && time - lastStreakTime > 3000 + Math.random() * 5000) {
         streaks.push({
           x: Math.random() * (width + 200) - 100, // Can spawn slightly off-screen
           y: -50,

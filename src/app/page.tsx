@@ -7,6 +7,7 @@ import { OperatorProfile } from '@/components/sections/operator-profile';
 import { OperationsPanel } from '@/components/sections/operations-panel';
 import { ResearchArchive } from '@/components/sections/research-archive';
 import { SystemSpecs } from '@/components/sections/system-specs';
+import { SkillTopology } from '@/components/sections/skill-topology';
 
 import { AetherObservatory } from '@/components/sections/aether-observatory';
 // We will replace BentoGrid with a Schematic flow later.
@@ -144,6 +145,11 @@ export default function Home() {
         {/* System Architecture Showcase */}
         <div id="architecture" className="scroll-mt-32">
           <AetherSchematic />
+        </div>
+
+        {/* Capability Topology — The Living Ecosystem */}
+        <div id="skills" className="scroll-mt-32">
+          <SkillTopology />
         </div>
 
         {/* Human Operator Subsystem */}

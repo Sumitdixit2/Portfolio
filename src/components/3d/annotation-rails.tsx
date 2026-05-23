@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Html } from '@react-three/drei';
 import { MotionValue } from 'framer-motion';
+import { usePerformanceStore } from '@/lib/performance-store';
+
 export function AnnotationRails({ scrollProgress }: { scrollProgress: MotionValue<number> }) {
   const [opacityShell, setOpacityShell] = useState(0);
   const [opacityRings, setOpacityRings] = useState(0);
@@ -11,7 +13,24 @@ export function AnnotationRails({ scrollProgress }: { scrollProgress: MotionValu
 
   useFrame(() => {
     const p = scrollProgress.get();
+    const tier = usePerformanceStore.getState().fpsTier;
     
+    // In low performance tier, we skip the granular opacity animations 
+    // to reduce React state updates per frame from HTML annotations.
+    if (tier === 'low') {
+      if (opacityShell !== 1 && p > 0.20 && p < 0.97) setOpacityShell(1);
+      if (opacityRings !== 1 && p > 0.37 && p < 0.97) setOpacityRings(1);
+      if (opacityCore !== 1 && p > 0.57 && p < 0.97) setOpacityCore(1);
+      
+      // Basic hide logic when completely scrolled past
+      if (p <= 0.20 || p >= 0.97) {
+        if (opacityShell !== 0) setOpacityShell(0);
+        if (opacityRings !== 0) setOpacityRings(0);
+        if (opacityCore !== 0) setOpacityCore(0);
+      }
+      return;
+    }
+
     // Shell annotations visible from 0.20 (shell fully open) to 0.95
     let sOpacity = 0;
     if (p > 0.20 && p < 0.97) sOpacity = Math.min(1, (p - 0.20) * 8);

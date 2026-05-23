@@ -5,6 +5,8 @@ import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { MotionValue } from 'framer-motion';
 
+import { usePerformanceStore } from '@/lib/performance-store';
+
 // --- BLUEPRINT MATERIAL PALETTE — Assembly Rings ---
 const MAT_GRAPHITE = new THREE.MeshStandardMaterial({
   color: '#020617',      // near-void — ring rail backbone
@@ -31,10 +33,32 @@ export function AssemblyRings({ scrollProgress }: { scrollProgress: MotionValue<
   const supportFrames = useRef<THREE.Group>(null);
 
   useFrame((state) => {
+    const tier = usePerformanceStore.getState().fpsTier;
     const rawP = scrollProgress.get();
     // Rings explode after shell — 0.22→0.37 of scroll (~210vh at 1400vh total)
     const p = Math.max(0, Math.min(1, (rawP - 0.22) * 6.667));
     const t = state.clock.elapsedTime;
+
+    if (tier === 'low') {
+      if (ringGroup1.current) {
+        ringGroup1.current.rotation.y = t * 0.12 + p * 0.3;
+        ringGroup1.current.position.y = p * 1.8;
+        const scale = 1 + p * 0.15;
+        ringGroup1.current.scale.set(scale, 1, scale);
+      }
+      if (ringGroup2.current) {
+        ringGroup2.current.rotation.y = -(t * 0.09 + p * 0.2);
+        ringGroup2.current.position.y = -(p * 1.8);
+        const scale = 1 + p * 0.15;
+        ringGroup2.current.scale.set(scale, 1, scale);
+      }
+      if (supportFrames.current) {
+        supportFrames.current.rotation.y = t * 0.035;
+        const explode = 1 + p * 1.5;
+        supportFrames.current.scale.set(explode, 1, explode);
+      }
+      return;
+    }
 
     // ── Upper ring: primary CW rotation + Y micro-oscillation after separation ──
     if (ringGroup1.current) {
