@@ -5,12 +5,10 @@ import { SystemAnnotation } from '@/components/ui/system-annotation';
 import { AetherSchematic } from '@/components/sections/aether-schematic';
 import { OperatorProfile } from '@/components/sections/operator-profile';
 import { OperationsPanel } from '@/components/sections/operations-panel';
+import { VisitorTelemetry } from '@/components/sections/visitor-telemetry';
 
 import { SystemSpecs } from '@/components/sections/system-specs';
 import { SkillTopology } from '@/components/sections/skill-topology';
-
-
-// We will replace BentoGrid with a Schematic flow later.
 
 const fadeVariant = {
   hidden: { opacity: 0 },
@@ -135,6 +133,9 @@ export default function Home() {
 
 
       <div className="max-w-4xl mx-auto px-8 md:px-32 flex flex-col gap-24 pb-32 mt-20 md:mt-28">
+        {/* Real-time Visitor Telemetry */}
+        <VisitorTelemetry />
+
         {/* Capability Topology — The Living Ecosystem */}
         <div id="skills" className="scroll-mt-32">
           <SkillTopology />
