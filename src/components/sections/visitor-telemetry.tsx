@@ -27,28 +27,48 @@ function Counter({ value }: { value: number }) {
   );
 }
 
+interface CounterAPIResponse {
+  id: number;
+  name: string;
+  count: number;
+  created_at: string;
+  updated_at: string;
+  namespace_id: number;
+}
+
 export function VisitorTelemetry() {
-  const [count, setCount] = useState(0);
+  const [count, setCount] = useState<number | null>(null);
   const [status, setStatus] = useState<'CONNECTING' | 'ACTIVE' | 'OFFLINE'>('CONNECTING');
 
   useEffect(() => {
     // Unique namespace for Sumit Dixit's portfolio to keep count separate
     fetch('https://api.counterapi.dev/v1/sumitdixit_portfolio/visits/up')
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        return res.json() as Promise<CounterAPIResponse>;
+      })
       .then((data) => {
-        if (data && typeof data.value === 'number') {
-          setCount(data.value);
+        if (data && typeof data.count === 'number') {
+          const realCount = data.count;
+          setCount(realCount);
           setStatus('ACTIVE');
+          localStorage.setItem('portfolio_real_visitor_count', realCount.toString());
         } else {
-          throw new Error('Invalid API response');
+          throw new Error('Invalid API response format');
         }
       })
       .catch((err) => {
         console.error('Counter API error:', err);
-        // Fallback to local storage if API is down
-        const fallback = parseInt(localStorage.getItem('portfolio_visitor_count') || '312', 10) + 1;
-        localStorage.setItem('portfolio_visitor_count', fallback.toString());
-        setCount(fallback);
+        // Fallback: use previously cached real count, or 0
+        const cached = localStorage.getItem('portfolio_real_visitor_count');
+        if (cached) {
+          const parsed = parseInt(cached, 10);
+          setCount(isNaN(parsed) ? 0 : parsed);
+        } else {
+          setCount(0);
+        }
         setStatus('OFFLINE');
       });
   }, []);
@@ -77,7 +97,11 @@ export function VisitorTelemetry() {
               TOTAL_HANDSHAKES
             </span>
             <div className="flex items-baseline gap-2">
-              {count > 0 ? <Counter value={count} /> : <span className="font-mono text-3xl font-bold text-accent">---</span>}
+              {count !== null ? (
+                <Counter value={count} />
+              ) : (
+                <span className="font-mono text-3xl font-bold text-accent">---</span>
+              )}
             </div>
           </div>
 
