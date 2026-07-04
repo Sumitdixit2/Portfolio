@@ -6,11 +6,10 @@ import { cn } from '@/lib/utils';
 
 const navItems = [
   { name: 'SYS_ENTRY', shortName: 'ENTRY', href: '#sys-entry' },
-  { name: 'ARCHITECTURE', shortName: 'ARCH', href: '#architecture' },
   { name: 'TOPOLOGY', shortName: 'TOPO', href: '#skills' },
-  { name: 'OPERATOR', shortName: 'USER', href: '#operator' },
+  { name: 'ARCHITECTURE', shortName: 'ARCH', href: '#architecture' },
   { name: 'OPERATIONS', shortName: 'OPS', href: '#operations' },
-  { name: 'RESEARCH', shortName: 'LOGS', href: '#research' },
+  { name: 'OPERATOR', shortName: 'USER', href: '#operator' },
 ];
 
 export function FloatingNav() {

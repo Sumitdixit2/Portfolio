@@ -5,11 +5,11 @@ import { SystemAnnotation } from '@/components/ui/system-annotation';
 import { AetherSchematic } from '@/components/sections/aether-schematic';
 import { OperatorProfile } from '@/components/sections/operator-profile';
 import { OperationsPanel } from '@/components/sections/operations-panel';
-import { ResearchArchive } from '@/components/sections/research-archive';
+
 import { SystemSpecs } from '@/components/sections/system-specs';
 import { SkillTopology } from '@/components/sections/skill-topology';
 
-import { AetherObservatory } from '@/components/sections/aether-observatory';
+
 // We will replace BentoGrid with a Schematic flow later.
 
 const fadeVariant = {
@@ -102,7 +102,7 @@ export default function Home() {
               <div className="w-full h-full bg-[#0A192F] relative overflow-hidden drafting-border mix-blend-luminosity grayscale opacity-75 group-hover:opacity-100 transition-opacity duration-700">
                 {/* Temporary Unsplash portrait for structural demonstration */}
                 <img
-                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&auto=format&fit=crop"
+                  src="/sum.jpeg"
                   alt="Sumit Dixit - Operator Profile"
                   className="object-cover w-full h-full object-center opacity-80"
                 />
@@ -133,28 +133,16 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Observatory Entry Separator */}
-      <div className="w-full border-t border-border/30 mt-24" />
-
-      <AetherObservatory />
-
-      {/* Observatory Exit Separator */}
-      <div className="w-full border-t border-border/30" />
 
       <div className="max-w-4xl mx-auto px-8 md:px-32 flex flex-col gap-24 pb-32 mt-20 md:mt-28">
-        {/* System Architecture Showcase */}
-        <div id="architecture" className="scroll-mt-32">
-          <AetherSchematic />
-        </div>
-
         {/* Capability Topology — The Living Ecosystem */}
         <div id="skills" className="scroll-mt-32">
           <SkillTopology />
         </div>
 
-        {/* Human Operator Subsystem */}
-        <div id="operator" className="scroll-mt-32">
-          <OperatorProfile />
+        {/* System Architecture Showcase */}
+        <div id="architecture" className="scroll-mt-32">
+          <AetherSchematic />
         </div>
 
         {/* System Operations Modules */}
@@ -162,10 +150,11 @@ export default function Home() {
           <OperationsPanel />
         </div>
 
-        {/* Technical Research Registry */}
-        <div id="research" className="scroll-mt-32">
-          <ResearchArchive />
+        {/* Human Operator Subsystem */}
+        <div id="operator" className="scroll-mt-32">
+          <OperatorProfile />
         </div>
+
 
         {/* Dependencies and Handshake */}
         <div className="pt-8 border-t border-border/50">
