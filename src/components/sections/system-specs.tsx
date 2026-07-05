@@ -56,11 +56,11 @@ export function SystemSpecs() {
           <SystemAnnotation label="EDU_LOG" value="ACADEMIC_BACKGROUND" className="mb-6" />
           <div className="drafting-border-l pl-4 border-accent/50 flex flex-col gap-4">
             <div>
-              <h4 className="font-sans text-sm text-foreground">BCA (Sophomore)</h4>
+              <h3 className="font-sans text-sm text-foreground">BCA (Sophomore)</h3>
               <p className="font-mono text-xs text-muted">VIPS - GGSIPU</p>
             </div>
             <div>
-              <h4 className="font-sans text-sm text-foreground">Smart India Hackathon</h4>
+              <h3 className="font-sans text-sm text-foreground">Smart India Hackathon</h3>
               <p className="font-mono text-xs text-muted">College Level Qualifier</p>
             </div>
           </div>

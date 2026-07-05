@@ -105,7 +105,7 @@ export default function Home() {
                   alt="Sumit Dixit — Backend Developer and DevOps Engineer"
                   fill
                   priority
-                  sizes="(max-width: 1024px) 100vw, 340px"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 80vw, 340px"
                   className="object-cover object-center opacity-80"
                 />
 
