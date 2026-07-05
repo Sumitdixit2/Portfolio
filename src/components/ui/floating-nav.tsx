@@ -78,7 +78,7 @@ export function FloatingNav() {
   if (!mounted) return null;
 
   return (
-    <div className="fixed top-8 left-1/2 -translate-x-1/2 z-[100] px-4 pointer-events-none w-full max-w-fit">
+    <nav aria-label="Main navigation" className="fixed top-8 left-1/2 -translate-x-1/2 z-[100] px-4 pointer-events-none w-full max-w-fit">
       <motion.div
         className="pointer-events-auto"
         initial={{ y: -30, opacity: 0 }}
@@ -126,6 +126,6 @@ export function FloatingNav() {
           })}
         </div>
       </motion.div>
-    </div>
+    </nav>
   );
 }

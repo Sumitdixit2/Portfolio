@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { SystemAnnotation } from '@/components/ui/system-annotation';
@@ -230,14 +231,13 @@ export function AetherSchematic() {
           <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-accent/40 z-20" />
           <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-accent/40 z-20" />
 
-          {/* Actual Mockup Image (Falls back to placeholder on load error) */}
-          <img
-            src="../../project-hub-screenshot.png"
-            alt="Project Hub Dashboard Telemetry Preview"
-            className="absolute inset-0 object-cover w-full h-full opacity-60 group-hover:opacity-85 transition-opacity duration-500 z-10"
-            onError={(e) => {
-              e.currentTarget.style.display = 'none';
-            }}
+          {/* Actual Mockup Image */}
+          <Image
+            src="/project-hub-screenshot.png"
+            alt="Project Hub Dashboard — multi-tenant monorepo telemetry interface"
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 800px"
+            className="object-cover opacity-60 group-hover:opacity-85 transition-opacity duration-500 z-10"
           />
 
           {/* Schematic Placeholder Diagnostics Overlay */}

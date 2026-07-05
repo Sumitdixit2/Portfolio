@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import { SystemAnnotation } from '@/components/ui/system-annotation';
 import { AetherSchematic } from '@/components/sections/aether-schematic';
 import { OperatorProfile } from '@/components/sections/operator-profile';
@@ -23,7 +24,7 @@ export default function Home() {
         It sits perfectly between the fixed drafting lines created in layout.tsx 
       */}
       {/* Hero / System Entry */}
-      <div id="sys-entry" className="relative min-h-screen flex flex-col justify-center max-w-6xl mx-auto px-6 sm:px-12 md:px-24">
+      <header id="sys-entry" className="relative min-h-screen flex flex-col justify-center max-w-6xl mx-auto px-6 sm:px-12 md:px-24">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-8 mt-24 lg:mt-0 w-full">
 
           {/* Left Column: Identity Console */}
@@ -99,10 +100,13 @@ export default function Home() {
             <div className="absolute inset-0 z-10 p-2">
               <div className="w-full h-full bg-[#0A192F] relative overflow-hidden drafting-border mix-blend-luminosity grayscale opacity-75 group-hover:opacity-100 transition-opacity duration-700">
                 {/* Temporary Unsplash portrait for structural demonstration */}
-                <img
+                <Image
                   src="/sum.jpeg"
-                  alt="Sumit Dixit - Operator Profile"
-                  className="object-cover w-full h-full object-center opacity-80"
+                  alt="Sumit Dixit — Backend Developer and DevOps Engineer"
+                  fill
+                  priority
+                  sizes="(max-width: 1024px) 100vw, 340px"
+                  className="object-cover object-center opacity-80"
                 />
 
                 {/* Bottom Gradient Fade for Data Overlays */}
@@ -129,7 +133,7 @@ export default function Home() {
           </motion.aside>
 
         </div>
-      </div>
+      </header>
 
 
       <div className="max-w-4xl mx-auto px-8 md:px-32 flex flex-col gap-24 pb-32 mt-20 md:mt-28">
