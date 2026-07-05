@@ -3,7 +3,7 @@ import { MetadataRoute } from 'next';
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     {
-      url: 'https://timus.co.in',
+      url: 'https://www.timus.co.in',
       lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 1,

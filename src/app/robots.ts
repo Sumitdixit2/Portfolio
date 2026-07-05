@@ -9,6 +9,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/api/', '/_next/'],
       },
     ],
-    sitemap: 'https://timus.co.in/sitemap.xml',
+    sitemap: 'https://www.timus.co.in/sitemap.xml',
   };
 }

@@ -9,7 +9,7 @@ export function JsonLd() {
     '@type': 'Person',
     name: 'Sumit Dixit',
     jobTitle: 'Backend Developer & DevOps Engineer',
-    url: 'https://timus.co.in',
+    url: 'https://www.timus.co.in',
     sameAs: ['https://github.com/Sumitdixit2'],
     email: 'sumitdixit.dev@gmail.com',
     knowsAbout: [
@@ -37,7 +37,7 @@ export function JsonLd() {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: 'Sumit Dixit Portfolio',
-    url: 'https://timus.co.in',
+    url: 'https://www.timus.co.in',
     description:
       'Portfolio of Sumit Dixit — Backend Developer & DevOps Engineer specializing in scalable system architecture.',
     author: {

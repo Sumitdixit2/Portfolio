@@ -20,7 +20,7 @@ const firaCode = Fira_Code({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://timus.co.in'),
+  metadataBase: new URL('https://www.timus.co.in'),
   title: {
     default: 'Sumit Dixit | Backend Developer & DevOps Engineer',
     template: '%s | Sumit Dixit',
@@ -53,7 +53,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://timus.co.in',
+    url: 'https://www.timus.co.in',
     title: 'Sumit Dixit | Backend Developer & DevOps Engineer',
     description:
       'Architecting robust, scalable systems built to last. Explore projects, skills, and system designs.',
