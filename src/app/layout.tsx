@@ -58,21 +58,12 @@ export const metadata: Metadata = {
     description:
       'Architecting robust, scalable systems built to last. Explore projects, skills, and system designs.',
     siteName: 'Sumit Dixit Portfolio',
-    images: [
-      {
-        url: '/og-image.png',
-        width: 1200,
-        height: 630,
-        alt: 'Sumit Dixit — Backend Developer & DevOps Engineer',
-      },
-    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Sumit Dixit | Backend Developer & DevOps Engineer',
     description:
       'Architecting robust, scalable systems built to last. Explore projects, skills, and system designs.',
-    images: ['/og-image.png'],
   },
   icons: {
     icon: '/favicon.ico',
