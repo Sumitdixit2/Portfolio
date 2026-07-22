@@ -4,6 +4,7 @@ import './globals.css';
 import { MotionLayers } from '@/components/ui/motion-layers';
 import { FloatingNav } from '@/components/ui/floating-nav';
 import { CommandMenu } from '@/components/ui/command-menu';
+import { BackgroundAudio } from '@/components/ui/background-audio';
 import { JsonLd } from '@/components/json-ld';
 
 
@@ -107,6 +108,7 @@ export default function RootLayout({
           <MotionLayers />
           <FloatingNav />
           <CommandMenu />
+          <BackgroundAudio />
           {children}
         </div>
       </body>
